@@ -3,6 +3,8 @@
 https://cn.vjudge.net/problem/LightOJ-1099
 */
 
+//github.com/rongweihe
+//Dijkstra 求次短路
 #include <bits/stdc++.h>
 using namespace std;
 const int inf =  0xfffffff;
@@ -31,21 +33,21 @@ int Dij()
     {
         pii q = Q.top();
         Q.pop();
-
         int d = q.first;
         int v = q.second;
-        if(d>dis2[v])
+        if(d>dis2[v])//放进队列里面的一定是d<dis2的。和vis数组标记是否访问过剪枝一样
             continue;
         for(int i=0; i<edge[v].size(); ++i)
         {
             Edge e = edge[v][i];
             int d2 = d+e.cost;
-            if(dis1[e.to]>d2)
+            if(dis1[e.to]>d2)//记录起点经过v到e的距离
             {
-                swap(dis1[e.to],d2);//!!!!swap交换而不是替换
+                swap(dis1[e.to],d2);//swap交换而不是替换
                 Q.push(pii(dis1[e.to],e.to));
             }
-            if(dis2[e.to]>d2 && dis1[e.to]<d2)
+            //到e的距离如果大于之前的最短到e的距离小于之前到e次短距离就更新
+            if( d2>dis1[e.to] && d2<dis2[e.to])
             {
                 dis2[e.to] = d2;
                 Q.push(pii(dis2[e.to],e.to));
@@ -61,7 +63,7 @@ void add_edge(int u,int v,int w)
 }
 int main()
 {
-   // freopen("in.txt","r",stdin);
+    //freopen("in.txt","r",stdin);
     scanf("%d%d",&n,&m);
     for(int i=0; i<=n; ++i)
         edge[i].clear();

@@ -75,3 +75,56 @@ int main()
     }
     return 0;
 }
+
+/*
+求 长度为K的连续子序列的最大值的最小值
+参考链接：https://www.nowcoder.com/discuss/216237?type=0&order=0&pos=5&page=1
+
+最大最小值
+思路
+首先注意到答案按顺序不减。
+考虑把数字从大到小插入，当前插入数字u，那么假设某个k满足ans[k] <= u，则u和u之前的数字把序列分成了一段段，k要满足k <= 这些段中最长的。这样处理完毕之后再填入处理过程中没有填的位置。
+
+参考代码
+*/
+#include<bits/stdc++.h>
+using namespace std;
+multiset<int> st ;
+int n , k;
+struct num
+{
+    int v ;
+    int id;
+}h[100005];
+bool cmp(num a,num b)
+{
+    return a.v < b.v;
+}
+int L[100005] , R[100005];
+int ans[100005];
+int main()
+{
+    scanf("%d",&n) ;
+    for(int i = 1;i <= n;i++) {
+        scanf("%d",&h[i].v) ;
+        h[i].id = i;
+    }
+    sort(h + 1 , h + n + 1, cmp) ;
+    for(int i = 1;i <= n;i++) {
+        L[i] = i - 1,R[i] = i + 1; ans[i] = 2e9;
+    }
+    for(int i = 1;i <= n;i++) {
+        int a = h[i].id - L[h[i].id] - 1 , b = R[h[i].id] - h[i].id - 1 ;
+        if(a) st.erase(st.find(a));
+        if(b) st.erase(st.find(b)) ;
+        st.insert(a + b + 1) ;
+        L[R[h[i].id]] = L[h[i].id] ; R[L[h[i].id]] = R[h[i].id] ;
+        multiset<int>::iterator it = st.end() ; it--;
+        ans[*it] = min(ans[*it] , h[i].v) ;
+    }
+    for(int i = n ; i >= 1;i--){
+        if(ans[i] == (2e9)) ans[i] = ans[i + 1];
+    }
+    for(int i = 1;i <= n;i++) printf("%d ",ans[i]) ;
+    return 0;
+}

@@ -1,6 +1,52 @@
 //Create By @herongwei
 //使用 C++ string 实现简单大整数相加模板
 //注意传引用
+//两种方法
+
+//不适用额外空间，原地修改
+void initial(string &a, string &b)
+{
+    while (a.size()<b.size())
+        a = '0' + a;
+    while (b.size()<a.size())
+        b = '0' + b;
+}
+bool del(string &a)
+{
+    if (a[0] == '0')
+    {
+        a.erase(0, 1);
+        return true;
+    }
+    else
+        return false;
+}
+string bigIntegerAdd(string &a, string &b)
+{
+    //补零操作使得长度一致然后输出的时候去掉前缀0
+    initial(a,b);
+    a = '0' + a;
+    b = '0' + b;
+    //cout<<"a="<<a<<"b="<<b<<endl;
+    for(int i=a.size()-1; i>=0; --i)
+    {
+        int add = (a[i] -'0' + b[i] -'0');
+        if(add >9)
+        {
+            a[i-1] = (a[i-1] -'0' + 1 +'0');
+            a[i]   = (add - 10 + '0');
+        }
+        else
+        {
+            a[i] = (add + '0');
+        }
+    }
+    del(a);
+    return a;
+}
+
+
+//使用额外空间
 string bigIntegerAdd(string& s1,string& s2)
 {
     string a    = s1;

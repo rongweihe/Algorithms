@@ -53,3 +53,77 @@ int main()
     return 0;
 }
  
+
+//另外的版本
+
+/*
+Create By @herongwei 2019/08/10
+【题目描述】
+给定一个 double 类型的浮点数 base 和 int 类型的整数 exponent。求 base 的 exponent 次方。
+【思路】
+该位运算去除 n 的位级表示中最低的那一位。
+
+n       : 10110100
+n-1     : 10110011
+n&(n-1) : 10110000
+时间复杂度：O(M)，其中 M 表示 1 的个数。
+*/
+class Solution
+{
+public:
+    double Power(double base, int exp)
+    {
+        if (equal(base,0))
+        {
+            if (exp > 0)
+                return 0;
+            else if (exp == 0)
+                return 0;
+            else
+            {
+                bool g_InvalidInput = true;
+                throw invalid_argument("Invalid input!");
+            }
+        }
+        else
+        {
+            if (exp > 0)
+                return power(base, exp);
+            else if (exp == 0)
+                return 1;
+            else
+                return 1 / power(base, -exp);
+        }
+    }
+public:
+    bool equal(double e1,double e2)
+    {
+        if(e1-e2>-eps && e1-e2<eps)
+        {
+            return true;
+        }
+        return false;
+    }
+    double power(double base, int exp)
+    {
+        if (exp == 1)
+            return base;
+        //指数是偶数
+        if ((exp & 1) == 0)
+        {
+            int tmp = power(base, exp >> 1);
+            return tmp * tmp;
+        }
+        else
+        {
+        //指数是奇数
+            int tmp = power(base, (exp - 1) >> 1);
+            return tmp * tmp * base;
+        }
+    }
+private:
+    bool g_InvalidInput = false;
+    const double eps = 1e-8;
+};
+
+

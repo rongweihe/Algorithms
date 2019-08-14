@@ -1,4 +1,7 @@
+//两种思路
+
 /*
+思路一
 Author: github.com/rongweihe
 Date  : 2019-04-13
 题目  : 数组奇偶拆分
@@ -48,4 +51,28 @@ int main()
     return 0;
 }
 
-
+//思路二
+// Create by@herongwei 2019/08/14
+// 时间复杂度为O(n)；空间复杂度为O(1)，删除偶数值，然后尾插，遍历一遍即可
+class Solution
+{
+public:
+    void reOrderArray(vector<int>& array)
+    {
+        int sz = array.size();
+        std::vector<int>::iterator it = array.begin();
+        for(int i=0; i<sz; ++i)
+        {
+            if(*it%2==0)
+            {
+                int tmp = *it;
+                array.erase(it);
+                array.push_back(tmp);
+            }
+            else
+            {
+                it++;
+            }
+        }
+    }
+};

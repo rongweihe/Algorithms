@@ -39,17 +39,41 @@ abcdef
 空间限制：256MB
 */
 
+
 #include <bits/stdc++.h>
 using namespace std;
 const int maxn = 1e5 + 233;
 long long n,ch[maxn][30],val[maxn],cnt,m;
-long long f[maxn][31],pre[maxn];
+long long f[maxn][31],dep[maxn];
 string str[maxn];
+/*
+1.倍增法
+我们首先脑补一下求LCA的过程——两个节点平层同时往上跳，直到相遇，相遇的点就是他们的LCA。
+但是很明显，如果这棵树的深度较大，那么就要跳很久了【这是最最朴素的做法，复杂付O(n*m)】。
+所以可以采用倍增优化——大步大步地跳。
+
+我们首先要记录下每个节点的父节点和各个祖先节点，可以开一个fa[maxn][25]，fa[x][i]表示节点x的第i+1位祖先，
+也就是说x的父亲节点就是fa[x][0]，爷爷就是fa[x][1]亦是父亲的父亲fa[fa[x][0]][0]……以此类推，
+这样在更新的时候我们就可以得到一个递推式：fa[x][i] = fa[fa[x][i - 1]][i - 1].就可以预处理出每个节点的各个祖先。
+
+再者就是——大步大步跳，跳多少呢？明显是（dep为节点深度）。每一次都log一下还要换底（log函数默认底数为e），
+所以log我们也打表预处理出来。
+
+在向上跳时，我们先让x和y处于同一层，让深度更深的一个先往上跳，然后两个再一起跳，直到两点有了同一个父亲。
+当然，在刚刚得到两点平层的时候可以特判一下：是否两点已经汇合了，是则可以返回了。
+
+参考
+链接：https://www.acwing.com/blog/content/212/
+来源：AcWing
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+*/
 void dfs(long long u,long long fa)
 {
-    pre[u]=pre[fa]+1;
-    for(int i=0; i<=29; ++i)
+    dep[u]=dep[fa]+1;//初始化深度
+    for(int i=0; i<=29; ++i) //递推式
+    {
         f[u][i+1]=f[f[u][i]][i];
+    }
     for(int i=0; i<=26; ++i)
     {
         long long  v = ch[u][i];
@@ -57,8 +81,8 @@ void dfs(long long u,long long fa)
         {
             continue;
         }
-        f[v][0]=u;
-        dfs(v,u);
+        f[v][0]=u;//更新v节点的0好祖先为u
+        dfs(v,u);//继续往下遍历
     }
 }
 void insertStr(long long  pos)
@@ -73,30 +97,34 @@ void insertStr(long long  pos)
         }
         u=ch[u][x];
     }
-    val[pos]=u;
+    val[pos]=u;//记录此字符串的尾节点
 }
 long long  LCA(long long  x,long long y)
 {
-    if(pre[x]<pre[y])
+    if(dep[x]<dep[y]) //保证x的深度更大，跳x
         swap(x,y);
     for(int i=30; i>=0; --i)
     {
-        if(pre[f[x][i]]>=pre[y])
+        if(dep[f[x][i]]>=dep[y]) //让x节点先往上走
             x=f[x][i];
-        if(x==y)
+        if(x==y) //保证是同一层
             return x;
     }
     for(int i=30; i>=0; --i)
-        if(f[x][i]!=f[y][i])
+    {
+        if(f[x][i]!=f[y][i])//倍增一起往上跳
         {
             x=f[x][i];
             y=f[y][i];
         }
+    }
+    //cout<<"x===========y="<<x<<y<<endl;//5 8
+    cout<<"--------"<<f[x][0]<<endl;
     return f[x][0];
 }
 int main()
 {
-   // freopen("in.txt","r",stdin);
+    //freopen("in.txt","r",stdin);
     scanf("%lld",&n);
     for(int i=1; i<=n; ++i)
     {
@@ -107,8 +135,10 @@ int main()
     long long  a,b;
     while(scanf("%lld%lld",&a,&b)!=EOF)
     {
-        long long  ans =LCA(val[a],val[b]);
-        printf("%d\n",pre[ans]-1);
+        long long  ans =LCA(val[a],val[b]);//输出两个节点的最近公共节点
+        //cout<<"val[a]="<<val[a]<<val[b]<<endl;
+        printf("%lld\n",dep[ans]-1);//输出该公共节点的深度即为最长公共前缀
     }
     return 0;
 }
+

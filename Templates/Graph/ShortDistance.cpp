@@ -1,6 +1,4 @@
 //
-
-```c++
 #include <string.h>  
 #include <stdio.h>  
 #include <iostream>  
@@ -119,4 +117,3 @@ int main()
 3 1 2 
 0 0 
 */  
-```

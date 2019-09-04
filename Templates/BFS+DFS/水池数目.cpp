@@ -35,6 +35,41 @@ void dfs2(int x, int y) {
     }
     else return;
 }
+
+
+struct st
+{
+	int x,y;
+	st(int m=0,int n=0)
+	{
+		x=m;y=n;
+	}
+};
+
+void bfs(int x,int y)
+{
+	queue<st> Q;
+	st fir;
+	Q.push(st(x,y));
+	map[x][y]=0;
+	while(!Q.empty())
+	{
+		fir=Q.front();
+		for(int i=0;i<4;i++)
+		{
+			int tx=fir.x+dir[i][0];
+            int ty=fir.y+dir[i][1];
+			if(map[tx][ty]==1)
+			{
+				Q.push(st(tx,ty));
+				map[tx][ty]=0;
+			}
+		}
+	    Q.pop();
+
+	}
+}
+
 int main() {
     //freopen("in.txt", "r", stdin);
     while(cin>>n>>m) {

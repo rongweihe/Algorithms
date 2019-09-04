@@ -24,9 +24,9 @@ outputCopy
 #include <bits/stdc++.h>
 using namespace std;
 
-const int maxn =  1050
-const int inf  = 0x3f3f3f3f;
-const int inff = INT_MAX;
+const int maxn =  1050;
+const int inf  = 0x3fffffff;
+const int inff = 9000000;
 int n, m;
 int dis[3][maxn][maxn];
 char mp[maxn][maxn], vis[maxn][maxn];
@@ -103,7 +103,7 @@ void bfs(int s)
 
 int main()
 {
-    freopen("in.txt","r",stdin);
+   // freopen("in.txt","r",stdin);
     while(scanf("%d%d", &n, &m) != EOF)
     {
         for(int i = 0 ; i < n ; ++i)
@@ -125,41 +125,10 @@ int main()
                 }
             }
         }
-        if(ans == inf)
+        if(ans >= inff)
             printf("-1\n");
         else
             printf("%d\n", ans);
     }
     return 0;
 }
-
-
-
-
-//int ShortestBridge(vector<vector<int>>& island) {
-//    bfs(island,0);
-//}
-
-
-/*
-0000100
-0103110
-0111000
-0011022
-0000020
-
-0000000
-0111110
-0100010
-0101010
-0100010
-0111110
-0000000
-
-0000100
-0001100
-0000000
-0100000
-0110000
-0000000
-*/

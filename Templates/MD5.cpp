@@ -59,7 +59,7 @@ unsigned char* md5_calc_file(const char* path, unsigned char *dst) {
 }
 
 
-/:* 将hex编码的MD5转换成字符串 */
+/* 将hex编码的MD5转换成字符串 */
 char* md5_hex2str(unsigned char* in_md5_hex, char* out_md5_str) {
     int i = 0;
 

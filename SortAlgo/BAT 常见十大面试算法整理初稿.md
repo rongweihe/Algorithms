@@ -8,118 +8,170 @@
 
 [TOC]
 
-
-
-
-
-
-
-#### 问题【1】十大排序算法
+# 问题【1】十大排序算法
 
 ###### 十大排序算法总结图
 
 ![十大排序算法总结图.PNG](https://i.loli.net/2019/04/11/5caf4bdcca035.png)
 
-###### 【1】冒泡
+## 【1】冒泡排序
 
 ![冒泡排序.PNG](https://i.loli.net/2019/04/11/5caf4c1c1cd34.png)
 
+下面代码中 `std::swap` 函数的源代码如下，可以看到有三个赋值操作:
+
 ```c++
-void bubbleSort(int a[],int n){
-    if(n <=1 )
-        return;
-    for(int i=0; i<n; ++i){
-        bool flag = false;
-        for(int j=0; j< n-i-1; ++j){
+template<class T>
+void swap(T &a, T &b) {
+    T temp = a;
+    a = b;
+    b = temp;
+}
+```
+
+```c++
+void BubbleSort(int a[],int len){
+    if(len <=1 ) {  return; }
+    for(int i=0; i<len; ++i) {
+        bool flag = false; //设定一个标记，若为false，则表示此次循环没有进行交换，也就是待排序列已经有序，排序已经完成。
+        for(int j=0; j< len-i-1; ++j){
             if(a[j] > a[j+1]){   // 交换
-                int tp = a[j];
-                a[j]   = a[j+1];
-                a[j+1] = tp;
+                std::swap(a[j], a[j+1]);
                 flag = true;   //表示有数据交换
             }
         }
-        if(!flag)
-            break;       //没有数据交集，提前退出
+        if(!flag) {   break;  }      //没有数据交集，提前退出
     }
+    for (int i=0; i<len; ++i) {
+        std::cout<<a[i]<<" ";
+    }
+}
+```
+
+测试
+
+```c++
+int main() {
+    int a[] = {34,66,2,5,95,4,46,27};
+    BubbleSort(a,sizeof(a)/sizeof(int)); //cout => 2 4 5 27 34 46 66 95
+    return 0;
 }
 ```
 
 
 
-###### 【2】插入
+## 【2】插入排序
 
 ![插入排序.PNG](https://i.loli.net/2019/04/11/5caf4c324bc0a.png)
 
 ```c++
-/*插入排序，左侧是已经排序好的，右边是未排序好的*/
-void insertSort(int a[],int n) {
-    if( n<=1 )
-        return;
-    for(int i=1; i<n; ++i) {
-        int val = a[i];
-        int j  = i-1;
-        for(; j>=0; --j) { //查找插入的位置
-            if(a[j]>val) a[j+1] = a[j];// 数据移动
-            else break;
+//插入排序：分为已排序和未排序 初始已排序区间只有一个元素 就是数组第一个 遍历未排序的每一个元素在已排序区间里找到合适的位置插入 并保证数据一直有序
+void InsertSort(int a[], int len) {
+    if (len <=1) {  return;  }
+    int minn, j;
+    for(int i=1; i<len; ++i) {
+        minn = a[i];
+        j = i-1;
+        for(; j>=0; --j) {
+            if (a[j] > minn) { a[j+1] = a[j]; } //大的元素往后移
+            else { break; }
         }
-        a[j+1] = val;// 插入数据
+        a[j+1] = minn;//记录下次循环最小数 插入数据
     }
+    for (int i=0; i<len; ++i) {
+        std::cout<<a[i]<<" ";
+    }
+}
+```
+
+测试
+
+```c++
+int main() {
+    int a[] = {34,66,2,5,95,4,46,27};
+    InsertSort(a,sizeof(a)/sizeof(int));//cout => 2 4 5 27 34 46 66 95
+    return 0;
 }
 ```
 
 
 
-###### 【3】选择排序
+## 【3】选择排序
 
 ![选择排序.PNG](https://i.loli.net/2019/04/11/5caf4c4ee3990.png)
 
 ```c++
 /*分已排序区间和未排序区间。每次会从未排序区间中找到最小的元素，将其放到已排序区间的末尾*/
-void selectSort(int a[],int n) {
-    if( n<=1 )
-        return;
-    int minV,tmpV;
-    for(int i=0; i<n-1; ++i) {
-        minV=i;
-        for(int j=i+1; j<n; ++j) {
-            if(a[j]<a[minV]) minV=j;
+void SelectSort(int a[], int len) {
+    if( len <=1 ) {  return; }
+    int minn, tmp;
+    for(int i=0; i<len-1; ++i) {
+        minn = i;
+        for(int j=i+1; j<len; ++j) {
+            if (a[j]<a[minn]) { minn = j; }//找到最小
         }
-        if(i!=minV) {
-            tmpV = a[i];
-            a[i] = a[minV];
-            a[minV]=tmpV;
-        }
+        if (minn != i) { swap(a[minn], a[i]); }
     }
+    for(int i=0; i<len; ++i) {
+        std::cout<<a[i]<<" ";
+    }
+    std::cout<<endl;
 }
 ```
 
-【问题】我们来看开篇的问题：冒泡排序和插入排序的时间复杂度都是 O(n )，都是原地排序算法，为什么插入排序要比冒泡排序更受欢迎呢？
+测试
 
-【答案】冒泡排序不管怎么优化，元素交换的次数是一个固定值，是原始数据的逆序度。插入排序是同样的，不管怎么优化，元素移动的次数也等于原始数据的逆序度。但是，从代码实现上来看，冒泡排序的数据交换要比插入排序的数据移动要复杂，冒泡排序需要3 个赋值操作，而插入排序只需要 1 个。把执行一个赋值语句的时间粗略地计为单位时间，处理相同规模的数，插入排序比冒泡排序减少三倍的单位时间！
+```c++
+int main() {
+    int a[] = {34,66,2,5,95,4,46,27};
+    SelectSort(a,sizeof(a)/sizeof(int));//cout => 2 4 5 27 34 46 66 95
+    return 0;
+}
+```
 
-###### 【4】快排
+【思考】冒泡排序和插入排序的时间复杂度都是 O(n )，都是原地排序算法，为什么插入排序要比冒泡排序更受欢迎呢？
+
+【思路】冒泡排序不管怎么优化，元素交换的次数是一个固定值，是原始数据的逆序度。插入排序是同样的，不管怎么优化，元素移动的次数也等于原始数据的逆序度。但是，从代码实现上来看，冒泡排序的数据交换要比插入排序的数据移动要复杂，冒泡排序需要3 个赋值操作，而插入排序只需要 1 个。把执行一个赋值语句的时间粗略地计为单位时间，处理相同规模的数，插入排序比冒泡排序减少三倍的单位时间！
+
+## 【4】快排
 
 ![快速排序.png](https://i.loli.net/2019/04/11/5caf4cd1df4e5.png)
 
 ```c++
-void quickSort(int a[],int left,int right){
-    if(left>=right)
-        return;
+//快速排序：先找到一个枢纽；在原来的元素里根据这个枢纽划分 比这个枢纽小的元素排前面；比这个枢纽大的元素排后面；两部分数据依次递归排序下去直到最终有序
+void QuickSort(int a[],int left,int right){
+    if (left >= right) { return ; }
     int piv = a[left];
     int L=left,R=right;
-    while( L<R ){
-        while(L<R && a[R]>=piv)--R;///从右向左找到第一个小于x的
-        if(L<R) a[L++]=a[R];
-        while(L<R && a[L]<=piv)++L;///从左向右找第一个大于x的数
-        if(L<R) a[R--]=a[L];
+    while( L<R ) {
+        while(L<R && a[R]>=piv){ --R; } //从右向左找到第一个比 piv 小的元素 和最左边的进行替换
+        if(L<R) { a[L++] = a[R]; }      //改成替换而不是交换 避免了不必要的交换
+        while(L<R && a[L]<=piv){ ++L; } //从左向右找到第一个比 piv 大的元素 和最右边的进行替换
+        if(L<R) { a[R--] = a[L]; }
     }
-    a[L]=piv;///把最开始取出来的x放到i处
-    quickSort(a,left,L-1);///以L为中间值，分左右两部分递归调用
+    a[L]=piv; //当 left 和right 会和之后，即找到了枢纽的位置时，再赋值回枢纽的值
+    quickSort(a,left,L-1);//以L为中间值，分左右两部分递归调用
     quickSort(a,L+1,right);
 }
 ```
 
-###### 【5】归并
+测试
+
+```c++
+int main() {
+    int a[] = {0,34,66,2,5,95,4,46,27};
+    QuickSort(a, 0, sizeof(a)/sizeof(int));
+    for(int i=0; i<=8; ++i) {
+        std::cout<<a[i]<<" "; // print => 0 2 4 5 27 34 46 66 95
+    }
+    std::cout<<endl;
+    return 0;
+}
+```
+
+
+
+## 【5】归并排序
 
 ![归并排序.PNG](https://i.loli.net/2019/04/11/5caf4d1e42eb8.png)
 
@@ -156,7 +208,7 @@ void mergeCount(int a[],int L,int mid,int R) {
 void mergeSort(int a[],int L,int R) {
     ///递归终止条件 分治递归
     /// 将 A[L...m] 和 A[m+1...R] 合并为 A[L...R]
-    if(L>=R) return ;
+    if( L>=R ) { return; }
     int mid = L + (R - L)/2;
     mergeSort(a,L,mid);
     mergeSort(a,mid+1,R);
@@ -164,9 +216,23 @@ void mergeSort(int a[],int L,int R) {
 }
 ```
 
+测试
+
+```c++
+int main() {
+    int a[] = {0,34,66,2,5,95,4,46,27};
+    mergeSort(a, 0, sizeof(a)/sizeof(int));
+    for(int i=0; i<=8; ++i) {
+        std::cout<<a[i]<<" "; // print => 0 2 4 5 27 34 46 66 95
+    }
+    std::cout<<endl;
+    return 0;
+}
+```
 
 
-###### 【6】堆排序
+
+## 【6】堆排序
 
 ```c++
 /*

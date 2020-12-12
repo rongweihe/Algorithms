@@ -199,7 +199,7 @@ void heapify(int a[], int n, int i) {
 
  对于快排来说，数据是顺序访问的。而对于堆排序来说，数据是跳着访问的。比如堆排序的堆化，下面这个例子，会依次访问数组下标是 1、2、4、8的元素，而不是像快排那样，局部顺序访问，所以这样对CPU缓存来说是不友好的。
 
-<img src="https://cdn.jsdelivr.net/gh/rongweihe/ImageHost01/images/why-heap-than-qsort.png" style="zoom:50%;" />
+![](https://cdn.jsdelivr.net/gh/rongweihe/ImageHost01/images/why-heapsort-better-than-sort.png)
 
 ### 第二点：对于同样的数据排序，堆排序算法的数据交换次数要多于快排
 
